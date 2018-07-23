@@ -1,4 +1,4 @@
-package DP;
+package dp;
 
 //568
 /*
@@ -31,7 +31,8 @@ public class MaximumVacationDays {
         int[][] memory = new int[flights.length][days[0].length];
 
 //        return dfs(flights, days, 0, 0);
-        return memorizeDfs(flights, days, memory, 0, 0);
+//        return memorizeDfs(flights, days, memory, 0, 0);
+        return dp(flights, days);
     }
 
     public static int dfs(int[][] flights, int[][] days, int curCity, int curWeek) {
@@ -61,6 +62,27 @@ public class MaximumVacationDays {
             }
         }
         memory[curCity][curWeek] = max;
+
+        return max;
+    }
+
+    public static int dp(int[][] flights, int[][] days) {
+        int[][] counts = new int[flights.length][days[0].length + 1];
+
+        for (int i = 0; i < flights.length; i++) {
+            for (int j = 1; j <= days[0].length; j++) {
+                for (int k = 0; k < flights.length; k++) {
+                    if (k == i || flights[i][k] == 1) {
+                        counts[i][j] = Math.max(counts[i][j], counts[k][j-1] + days[i][j-1]);
+                    }
+                }
+            }
+        }
+
+        int max = 0;
+        for (int i = 0; i < flights.length; i++) {
+            max = Math.max(max, counts[i][days[0].length]);
+        }
 
         return max;
     }
