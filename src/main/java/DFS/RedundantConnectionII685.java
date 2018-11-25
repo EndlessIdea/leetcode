@@ -73,6 +73,57 @@ public class RedundantConnectionII685 {
         return new OrbitResult(node, seen);
     }
 
+    public int[] findRedundantDirectedConnection1(int[][] edges) {
+        int size = edges.length;
+        int[] parent = new int[size];
+        List<int[]> candidates = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            int child = edges[i][1];
+            int root = edges[i][0];
+            if (parent[child] == 0) {
+                parent[child] = root;
+            } else {
+                candidates.add(new int[]{parent[child], child});
+                candidates.add(new int[]{edges[i][0], edges[i][1]});
+                edges[i][1] = 0; //cut this path
+            }
+        }
+
+        //union find前，先重置parent
+        for (int i = 0; i < edges.length; i++) {
+            parent[i] = i;
+        }
+
+        for (int i = 0; i < size; i++) {
+            if (edges[i][1] == 0) {
+                continue;
+            }
+            int child = edges[i][1];
+            int father = findParent(parent, edges[i][0]);
+            if (father == child) {
+                if (candidates.size() == 0) {
+                    return edges[i];
+                } else {
+                    return candidates.get(0);
+                }
+            }
+            parent[child] = father;
+        }
+
+        return candidates.get(1);
+    }
+
+    private int findParent(int[] parent, int child) {
+//        if (child == parent[child]) {
+//            return child;
+//        }
+//        parent[child] = findParent(parent, parent[child]);
+        while (parent[child] != child) {
+            parent[child] = parent[parent[child]];
+            child = parent[child];
+        }
+        return parent[child];
+    }
 
     public static void main(String[] args) {
 
